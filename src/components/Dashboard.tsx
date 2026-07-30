@@ -71,19 +71,19 @@ export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+    <div className="max-w-2xl mx-auto p-4 space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={onBack}
             className="p-2 text-text-dark hover:text-sage hover:bg-cream rounded-xl transition-all"
             title="返回修改"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-text-dark">📚 今日学习</h1>
-            <p className="text-text-light mt-1">
+            <h1 className="text-lg sm:text-xl font-bold text-text-dark">📚 今日学习</h1>
+            <p className="text-text-light text-sm">
               {new Date().toLocaleDateString('zh-CN', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
           </div>
@@ -93,53 +93,53 @@ export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
           className="p-2 text-text-dark hover:text-coral hover:bg-coral/10 rounded-xl transition-all"
           title="重新开始"
         >
-          <RotateCcw className="w-6 h-6" />
+          <RotateCcw className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         <button
           onClick={() => setShowCalendar(!showCalendar)}
           className="card card-hover text-center cursor-pointer"
         >
-          <div className="w-12 h-12 bg-sage/20 rounded-2xl flex items-center justify-center mx-auto mb-2">
-            <Calendar className="w-6 h-6 text-sage" />
+          <div className="w-10 h-10 bg-sage/20 rounded-2xl flex items-center justify-center mx-auto mb-1">
+            <Calendar className="w-5 h-5 text-sage" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold text-text-dark">{daysLeft}</p>
-          <p className="text-sm text-text-light">剩余天数</p>
+          <p className="text-lg sm:text-xl font-bold text-text-dark">{daysLeft}</p>
+          <p className="text-xs text-text-light">剩余天数</p>
           {showCalendar ? (
-            <ChevronUp className="w-4 h-4 text-text-light mx-auto mt-1" />
+            <ChevronUp className="w-3 h-3 text-text-light mx-auto mt-1" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-text-light mx-auto mt-1" />
+            <ChevronDown className="w-3 h-3 text-text-light mx-auto mt-1" />
           )}
         </button>
         
         <div className="card text-center">
-          <div className="w-12 h-12 bg-coral/20 rounded-2xl flex items-center justify-center mx-auto mb-2">
-            <Target className="w-6 h-6 text-coral" />
+          <div className="w-10 h-10 bg-coral/20 rounded-2xl flex items-center justify-center mx-auto mb-1">
+            <Target className="w-5 h-5 text-coral" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold text-text-dark">{completedToday}/{totalToday}</p>
-          <p className="text-sm text-text-light">今日完成</p>
+          <p className="text-lg sm:text-xl font-bold text-text-dark">{completedToday}/{totalToday}</p>
+          <p className="text-xs text-text-light">今日完成</p>
         </div>
         
         <div className="card text-center">
-          <div className="w-12 h-12 bg-sage/20 rounded-2xl flex items-center justify-center mx-auto mb-2">
-            <Award className="w-6 h-6 text-sage" />
+          <div className="w-10 h-10 bg-sage/20 rounded-2xl flex items-center justify-center mx-auto mb-1">
+            <Award className="w-5 h-5 text-sage" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold text-text-dark">{progress}%</p>
-          <p className="text-sm text-text-light">总进度</p>
+          <p className="text-lg sm:text-xl font-bold text-text-dark">{progress}%</p>
+          <p className="text-xs text-text-light">总进度</p>
         </div>
       </div>
 
       {showCalendar && (
         <div className="card max-h-64 overflow-y-auto">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-text-dark text-lg">📅 学习日历</h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-bold text-text-dark text-base">📅 学习日历</h3>
             <button
               onClick={() => setShowCalendar(false)}
               className="text-text-light hover:text-text-dark"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -154,7 +154,7 @@ export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
                 <button
                   key={date}
                   onClick={() => setSelectedDate(isSelected ? null : date)}
-                  className={`p-3 rounded-xl text-left transition-all border-2 ${
+                  className={`p-2 rounded-xl text-left transition-all border-2 ${
                     isSelected ? 'bg-sage text-white border-text-dark' :
                     isToday ? 'bg-coral/10 border-coral' :
                     completed ? 'bg-sage/10 border-sage' :
@@ -162,7 +162,7 @@ export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
                     'bg-white/50 border-transparent opacity-50'
                   }`}
                 >
-                  <p className="font-bold text-sm">{formatDate(date)}</p>
+                  <p className="font-bold text-xs">{formatDate(date)}</p>
                   <p className="text-xs mt-1 opacity-70">{dateTasks.length}个任务</p>
                   {completed && hasTasks && (
                     <p className="text-xs mt-1">✓ 已完成</p>
@@ -175,19 +175,19 @@ export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
       )}
 
       <div className="card">
-        <div className="flex items-center gap-2 mb-4">
-          <h2 className="font-bold text-text-dark text-lg">📖 学习进度</h2>
+        <div className="flex items-center gap-2 mb-3">
+          <h2 className="font-bold text-text-dark text-base">📖 学习进度</h2>
         </div>
         <ProgressBar progress={progress} />
       </div>
 
       <div>
-        <h2 className="text-lg sm:text-xl font-bold text-text-dark mb-4">📝 今日任务</h2>
+        <h2 className="text-base sm:text-lg font-bold text-text-dark mb-3">📝 今日任务</h2>
         
         {todayTasks.length === 0 ? (
-          <div className="card text-center py-12">
-            <div className="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Target className="w-10 h-10 text-sage" />
+          <div className="card text-center py-8">
+            <div className="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Target className="w-8 h-8 text-sage" />
             </div>
             <p className="text-text-dark font-bold">今日任务已完成或暂无任务</p>
             <p className="text-text-light mt-1">太棒啦！🎉</p>
@@ -204,30 +204,30 @@ export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
       {selectedDate && (
         <div className="modal-container">
           <div className="modal-content">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <div>
-                <h3 className="text-lg font-bold text-text-dark">
+                <h3 className="text-base font-bold text-text-dark">
                   {formatDate(selectedDate)}的任务
                 </h3>
-                <p className="text-sm text-text-light">{selectedDate}</p>
+                <p className="text-xs text-text-light">{selectedDate}</p>
               </div>
               <button
                 onClick={() => setSelectedDate(null)}
                 className="text-text-light hover:text-text-dark"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
             
-            <div className="space-y-3 mb-6">
+            <div className="space-y-2 mb-4">
               {getSelectedDateTasks().map(task => (
-                <div key={task.id} className="flex items-center justify-between p-4 bg-cream rounded-xl border-2 border-text-dark">
+                <div key={task.id} className="flex items-center justify-between p-3 bg-cream rounded-xl border-2 border-text-dark">
                   <div>
-                    <p className="font-bold text-text-dark">{task.contentName}</p>
-                    <p className="text-sm text-text-light">{task.courseName}</p>
+                    <p className="font-bold text-sm text-text-dark">{task.contentName}</p>
+                    <p className="text-xs text-text-light">{task.courseName}</p>
                   </div>
                   {task.completed && (
-                    <div className="w-6 h-6 bg-sage rounded-full flex items-center justify-center">
+                    <div className="w-5 h-5 bg-sage rounded-full flex items-center justify-center">
                       <span className="text-white text-xs font-bold">✓</span>
                     </div>
                   )}
@@ -250,7 +250,7 @@ export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
               
               return (
                 <div className="highlight-box">
-                  <h4 className="font-bold text-text-dark mb-2">📚 当天学习建议</h4>
+                  <h4 className="font-bold text-text-dark mb-2 text-sm">📚 当天学习建议</h4>
                   <div className="text-text-dark text-sm whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
                     {suggestions.join('\n\n')}
                   </div>

@@ -280,17 +280,17 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
   const isDisabled = courses.length === 0 || !startDate;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <div className="text-center mb-8">
-        <div className="w-20 h-20 bg-sage rounded-full flex items-center justify-center mx-auto mb-4">
-          <Target className="w-10 h-10 text-white" />
+    <div className="max-w-2xl mx-auto p-4 space-y-5">
+      <div className="text-center mb-5">
+        <div className="w-16 h-16 bg-sage rounded-full flex items-center justify-center mx-auto mb-3">
+          <Target className="w-8 h-8 text-white" />
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-text-dark">📚 考期助手</h1>
-        <p className="text-text-light mt-2">制定你的专属学习计划</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-text-dark">📚 考期助手</h1>
+        <p className="text-text-light mt-1 text-sm">制定你的专属学习计划</p>
       </div>
 
       <div className="card">
-        <h2 className="text-lg font-bold text-text-dark mb-4">
+        <h2 className="text-base font-bold text-text-dark mb-3">
           📅 设置开始日期
         </h2>
 
@@ -302,18 +302,6 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
             placeholder="选择开始日期"
           />
           <p className="text-xs text-text-light mt-2">每个课程的考试日期在添加课程时单独设置</p>
-        </div>
-      </div>
-
-      <div className="card bg-cream">
-        <div className="flex items-center gap-3 p-4">
-          <div className="w-12 h-12 bg-sage rounded-2xl flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h3 className="font-bold text-text-dark">✨ AI智能规划</h3>
-            <p className="text-sm text-text-light">内置DeepSeek AI为你生成专属学习计划</p>
-          </div>
         </div>
       </div>
 
