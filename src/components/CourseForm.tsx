@@ -240,7 +240,7 @@ export const CourseForm = ({ courses, onSave }: CourseFormProps) => {
           </div>
 
           <div className="border-t border-gray-100 pt-4 mt-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">课程内容</h3>
+            <h3 className="text-sm font-bold text-navy mb-2">课程内容</h3>
 
             {contents.length > 0 && (
               <div className="space-y-2 mb-3">
