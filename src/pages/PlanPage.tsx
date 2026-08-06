@@ -30,7 +30,7 @@ export const PlanPage = ({ plan, onReset }: PlanPageProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <Dashboard plan={plan} onReset={onReset} onBack={() => {}} />
+      <Dashboard plan={plan} onReset={onReset} />
     </div>
   );
 };
