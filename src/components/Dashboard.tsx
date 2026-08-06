@@ -9,10 +9,9 @@ import { savePlan } from '../utils/storage';
 interface DashboardProps {
   plan: ExamPlan;
   onReset: () => void;
-  onBack: () => void;
 }
 
-export const Dashboard = ({ plan, onReset, onBack }: DashboardProps) => {
+export const Dashboard = ({ plan, onReset }: DashboardProps) => {
   const [tasks, setTasks] = useState<DailyTask[]>(plan.tasks);
   const [todayTasks, setTodayTasks] = useState<DailyTask[]>([]);
   const [progress, setProgress] = useState(0);

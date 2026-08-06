@@ -89,6 +89,7 @@ ${courseMaterials ? '【最重要】课件内容是你生成计划的唯一依�
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`,
       },
+      timeout: 60000,
     }
   );
 
@@ -127,6 +128,7 @@ export const getStudySuggestion = async (
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`,
       },
+      timeout: 30000,
     }
   );
 

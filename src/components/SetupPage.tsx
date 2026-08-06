@@ -257,17 +257,20 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
       };
       savePlan(plan);
       onComplete(plan);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('生成计划失败:', error);
       
       // 显示详细错误信息
       let errorMessage = 'AI生成失败';
-      if (error.response) {
-        errorMessage = `AI服务错误: ${error.response.status} - ${error.response.data?.error?.message || '未知错误'}`;
-      } else if (error.request) {
-        errorMessage = '网络连接失败，请检查网络';
-      } else {
-        errorMessage = `请求失败: ${error.message}`;
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: { error?: { message?: string } } }; request?: unknown; message?: string };
+        if (axiosError.response) {
+          errorMessage = `AI服务错误: ${axiosError.response.status} - ${axiosError.response.data?.error?.message || '未知错误'}`;
+        } else if (axiosError.request) {
+          errorMessage = '网络连接失败，请检查网络';
+        } else {
+          errorMessage = `请求失败: ${axiosError.message || '未知错误'}`;
+        }
       }
       
       setAiError(errorMessage);
