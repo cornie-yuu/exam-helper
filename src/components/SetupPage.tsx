@@ -128,7 +128,7 @@ const parseAITasks = (aiResult: string, courses: Course[], startDate: string, en
           continue;
         }
         
-        let matchedContent = foundCourse.contents.find(c => 
+        let matchedContent = (foundCourse.contents || []).find(c => 
           c.name === contentName || c.name.includes(contentName) || contentName.includes(c.name)
         );
         
@@ -213,13 +213,13 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
 
     try {
       const courseText = courses.map(course =>
-        `${course.name}（考试：${course.examDate}）：${course.contents.map(c => c.name).join('、')}`
+        `${course.name}（考试：${course.examDate}）：${(course.contents || []).map(c => c.name).join('、')}`
       );
 
       // 整理课件内容（从每个课程内容中提取）
       const courseMaterials = courses.flatMap(course => 
-        course.contents.flatMap(content => 
-          content.materials
+        (course.contents || []).flatMap(content => 
+          (content.materials || [])
             .filter(m => !m.error && m.content)
             .map(m => `【${course.name} - ${content.name} - ${m.name}】\n${m.content}`)
         )
@@ -231,7 +231,7 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
       // 检查课件是否被包含在AI提示词中
       if (courseMaterials && courseMaterials.length > 0) {
         console.log('✅ 课件内容已成功传递给AI');
-        console.log('课件数量:', courses.flatMap(c => c.contents.flatMap(co => co.materials)).length);
+        console.log('课件数量:', courses.flatMap(c => (c.contents || []).flatMap(co => co.materials || [])).length);
       } else {
         console.log('⚠️ 未上传课件或课件内容为空');
       }
@@ -259,19 +259,22 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
       onComplete(plan);
     } catch (error) {
       console.error('生成计划失败:', error);
-      setAiError('AI生成失败，已自动切换为算法生成');
-
-      const tasks = generatePlan(courses, startDate, 'memory');
-      const plan: ExamPlan = {
-        id: generateId(),
-        startDate,
-        endDate,
-        learningStyle: 'memory',
-        courses,
-        tasks,
-      };
-      savePlan(plan);
-      onComplete(plan);
+      
+      // 显示详细错误信息
+      let errorMessage = 'AI生成失败';
+      if (error.response) {
+        errorMessage = `AI服务错误: ${error.response.status} - ${error.response.data?.error?.message || '未知错误'}`;
+      } else if (error.request) {
+        errorMessage = '网络连接失败，请检查网络';
+      } else {
+        errorMessage = `请求失败: ${error.message}`;
+      }
+      
+      setAiError(errorMessage);
+      setIsLoading(false);
+      
+      // 不自动跳转，让用户看到错误信息
+      return;
     } finally {
       setIsLoading(false);
     }
@@ -280,34 +283,34 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
   const isDisabled = courses.length === 0 || !startDate;
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-5">
-      <div className="text-center mb-5">
-        <div className="w-16 h-16 bg-sage rounded-full flex items-center justify-center mx-auto mb-3">
-          <Target className="w-8 h-8 text-white" />
+    <div className="max-w-2xl mx-auto p-4 space-y-4">
+      <div className="text-center mb-4">
+        <div className="w-14 h-14 bg-navy rounded-full flex items-center justify-center mx-auto mb-2">
+          <Target className="w-7 h-7 text-white" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-text-dark">📚 考期助手</h1>
-        <p className="text-text-light mt-1 text-sm">制定你的专属学习计划</p>
+        <h1 className="text-xl font-bold text-navy"> 考期助手</h1>
+        <p className="text-text-light mt-1 text-xs">制定你的专属学习计划</p>
       </div>
 
       <div className="card">
-        <h2 className="text-base font-bold text-text-dark mb-3">
-          📅 设置开始日期
+        <h2 className="text-sm font-bold text-navy mb-2">
+          设置开始日期
         </h2>
 
         <div>
-          <label className="block text-sm font-bold text-text-dark mb-1">开始复习日期</label>
+          <label className="block text-xs font-bold text-text-dark mb-1">开始复习日期</label>
           <DatePicker
             value={startDate}
             onChange={setStartDate}
             placeholder="选择开始日期"
           />
-          <p className="text-xs text-text-light mt-2">每个课程的考试日期在添加课程时单独设置</p>
+          <p className="text-xs text-text-light mt-1.5">每个课程的考试日期在添加课程时单独设置</p>
         </div>
       </div>
 
       {aiError && (
-        <div className="card bg-coral/10">
-          <p className="text-coral text-sm">{aiError}</p>
+        <div className="card bg-apple-red/10 border-apple-red/20">
+          <p className="text-apple-red text-xs">{aiError}</p>
         </div>
       )}
 
@@ -316,20 +319,20 @@ export const SetupPage = ({ onComplete, initialData }: SetupPageProps) => {
       <button
         onClick={handleGenerate}
         disabled={isDisabled || isLoading}
-        className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 border-text-dark ${
+        className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
           isDisabled || isLoading
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
             : 'btn-primary'
         }`}
       >
         {isLoading ? (
           <span className="flex items-center justify-center gap-2">
-            <span className="w-5 h-5 border-2 border-text-dark border-t-transparent rounded-full animate-spin" />
+            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             AI思考中...
           </span>
         ) : (
           <>
-            <Sparkles className="inline w-5 h-5 mr-2" />
+            <Sparkles className="inline w-4 h-4 mr-1.5" />
             AI生成学习计划
           </>
         )}

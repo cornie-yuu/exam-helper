@@ -213,8 +213,8 @@ export const CourseForm = ({ courses, onSave }: CourseFormProps) => {
   return (
     <div className="space-y-6">
       <div className="card">
-        <h2 className="text-lg font-semibold text-text-dark mb-4">
-          📚 {editingCourseId ? '编辑课程' : '添加新课程'}
+        <h2 className="text-sm font-bold text-navy mb-2">
+          {editingCourseId ? '编辑课程' : '添加新课程'}
         </h2>
 
         <div className="space-y-4">
@@ -342,8 +342,8 @@ export const CourseForm = ({ courses, onSave }: CourseFormProps) => {
 
             {/* 课件上传 */}
             <div className="mt-4 pt-4 border-t border-gray-100">
-              <label className="block text-sm font-bold text-text-dark mb-2">
-                📄 上传课件（可选）
+              <label className="block text-sm font-bold text-navy mb-2">
+                上传课件（可选）
               </label>
               
               <div
@@ -435,7 +435,7 @@ export const CourseForm = ({ courses, onSave }: CourseFormProps) => {
 
       {courses.length > 0 && (
         <div className="card">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">已添加课程</h2>
+          <h2 className="text-sm font-bold text-navy mb-2">已添加课程</h2>
           <div className="space-y-3">
             {courses.map(course => (
               <div

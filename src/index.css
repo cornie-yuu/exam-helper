@@ -10,10 +10,11 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #FAF8F5;
+  background-color: #F5F5F5;
   min-height: 100vh;
   color: #1A1A1A;
-  font-size: 15px;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
 }
 
 @media (max-width: 640px) {
@@ -22,204 +23,115 @@ body {
   }
 }
 
-.content-wrapper {
-  position: relative;
-  z-index: 1;
-}
-
 @layer components {
   .btn-primary {
-    @apply bg-sage text-text-dark font-bold py-4 px-8 rounded-2xl border-2 border-text-dark transition-all duration-300;
-    box-shadow: 0 4px 0 #1A1A1A;
+    @apply bg-navy text-white font-bold py-3 px-6 rounded-xl transition-all duration-200;
   }
   
   .btn-primary:hover {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #1A1A1A;
+    @apply opacity-90;
   }
   
   .btn-primary:active {
-    transform: translateY(4px);
-    box-shadow: none;
+    @apply opacity-80 scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply bg-apple-red text-white font-bold py-3 px-6 rounded-xl transition-all duration-200;
+  }
+
+  .btn-danger:hover {
+    @apply opacity-90;
   }
   
   .btn-secondary {
-    @apply bg-cream text-text-dark font-bold py-3 px-6 rounded-xl border-2 border-text-dark transition-all duration-300;
-    box-shadow: 0 3px 0 #1A1A1A;
+    @apply bg-white text-navy font-bold py-3 px-6 rounded-xl border border-gray-200 transition-all duration-200;
   }
   
   .btn-secondary:hover {
-    transform: translateY(1px);
-    box-shadow: 0 2px 0 #1A1A1A;
-  }
-  
-  .btn-secondary:active {
-    transform: translateY(3px);
-    box-shadow: none;
+    @apply bg-gray-50;
   }
   
   .card {
-    @apply bg-white rounded-2xl border-2 border-text-dark p-6;
-    box-shadow: 0 4px 0 #1A1A1A;
+    @apply bg-white rounded-xl p-4 border border-gray-100;
   }
   
   .card-hover {
-    @apply transition-all duration-300;
+    @apply transition-all duration-200;
   }
   
   .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #1A1A1A;
+    @apply shadow-sm;
   }
   
   .input-field {
-    @apply w-full px-4 py-3 bg-cream border-2 border-text-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-sage/50 transition-all duration-300;
+    @apply w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy/30 focus:border-navy transition-all duration-200 text-sm;
   }
   
   .task-card {
-    @apply bg-white rounded-xl p-4 border-2 border-text-dark cursor-pointer transition-all duration-300;
-    box-shadow: 0 3px 0 #1A1A1A;
+    @apply bg-white rounded-xl p-3 border border-gray-100 cursor-pointer transition-all duration-200;
   }
   
   .task-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 0 #1A1A1A;
+    @apply shadow-sm;
   }
   
   .task-card.completed {
-    @apply bg-coral/10 border-coral;
-    box-shadow: 0 3px 0 #E8967A;
+    @apply opacity-60;
   }
   
   .progress-bar {
-    @apply h-4 bg-cream rounded-xl overflow-hidden border-2 border-text-dark;
+    @apply h-2 bg-gray-100 rounded-full overflow-hidden;
   }
   
   .progress-fill {
-    @apply h-full bg-sage rounded-lg transition-all duration-500;
-  }
-  
-  .calendar-day {
-    @apply p-3 rounded-xl text-left transition-all duration-300 cursor-pointer border-2 border-transparent;
-  }
-  
-  .calendar-day:hover {
-    @apply bg-cream border-text-dark;
-  }
-  
-  .calendar-day.selected {
-    @apply bg-sage text-white border-text-dark;
-  }
-  
-  .modal-container {
-    @apply fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4;
-    animation: fadeIn 0.3s ease-out;
-  }
-  
-  .modal-content {
-    @apply bg-white rounded-2xl border-2 border-text-dark p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto;
-    box-shadow: 0 8px 0 #1A1A1A;
-    animation: slideUp 0.3s ease-out;
+    @apply h-full bg-navy rounded-full transition-all duration-500;
   }
   
   .chip {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-bold;
-    background: #FAF8F5;
-    border: 2px solid #1A1A1A;
-  }
-  
-  .chip.active {
-    @apply bg-sage text-white;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    background: #F0F0F0;
+    color: #1F316D;
   }
   
   .highlight-box {
-    @apply bg-cream rounded-xl p-4 border-2 border-text-dark;
-  }
-  
-  .radio-btn {
-    @apply w-6 h-6 rounded-full border-3 border-text-dark appearance-none cursor-pointer transition-all duration-300;
-  }
-  
-  .radio-btn:checked {
-    @apply bg-sage border-sage;
-  }
-  
-  .radio-btn:checked::after {
-    content: '';
-    @apply block w-3 h-3 bg-white rounded-full mx-auto mt-0.5;
-  }
-  
-  .checkbox {
-    @apply w-6 h-6 rounded-lg border-3 border-text-dark appearance-none cursor-pointer transition-all duration-300 flex items-center justify-center;
-  }
-  
-  .checkbox:checked {
-    @apply bg-sage border-sage;
-  }
-  
-  .checkbox:checked::after {
-    content: '✓';
-    @apply text-white font-bold text-sm;
+    @apply bg-navy/5 rounded-xl p-3 border border-navy/10;
   }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes bounce-soft {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
-  }
-}
-
-.animate-bounce-soft {
-  animation: bounce-soft 2s ease-in-out infinite;
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #8AB8B0;
-  border-radius: 4px;
-  border: 2px solid #FAF8F5;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #6A9890;
+  background: #D0D0D0;
+  border-radius: 3px;
 }
 
 ::selection {
-  background: rgba(138, 184, 176, 0.3);
+  background: rgba(31, 49, 109, 0.2);
   color: #1A1A1A;
 }
 
 input::placeholder {
   color: #6B6B6B;
+}
+
+/* Bottom nav safe area */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }

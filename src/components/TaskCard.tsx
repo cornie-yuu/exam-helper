@@ -38,26 +38,26 @@ export const TaskCard = ({ task, onToggle }: TaskCardProps) => {
 
   return (
     <div
-      className={`task-card flex items-center gap-3 p-4 ${
+      className={`task-card flex items-center gap-3 p-3 ${
         task.completed ? 'completed' : ''
       }`}
       onClick={() => onToggle(task.id)}
     >
       <button className="flex-shrink-0">
         {task.completed ? (
-          <div className="w-8 h-8 bg-sage rounded-full flex items-center justify-center">
-            <CheckCircle className="w-5 h-5 text-white" />
+          <div className="w-7 h-7 bg-navy rounded-full flex items-center justify-center">
+            <CheckCircle className="w-4 h-4 text-white" />
           </div>
         ) : (
-          <div className="w-8 h-8 bg-white border-2 border-text-dark rounded-full flex items-center justify-center hover:bg-sage/10 transition-all">
-            <Circle className="w-5 h-5 text-text-dark" />
+          <div className="w-7 h-7 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center hover:border-navy/50 transition-all">
+            <Circle className="w-4 h-4 text-gray-300" />
           </div>
         )}
       </button>
       
       <div className="flex-1 min-w-0">
         <h3
-          className={`font-bold text-base leading-snug ${
+          className={`font-bold text-sm leading-snug ${
             task.completed ? 'text-text-light line-through' : 'text-text-dark'
           }`}
         >
@@ -79,11 +79,10 @@ export const TaskCard = ({ task, onToggle }: TaskCardProps) => {
         )}
         
         <p className="text-xs text-text-light mt-1.5 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 bg-sage rounded-full" />
+          <span className="w-1.5 h-1.5 bg-navy rounded-full" />
           {task.courseName}
         </p>
       </div>
-      
     </div>
   );
 };

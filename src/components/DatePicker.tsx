@@ -191,7 +191,7 @@ export const DatePicker = ({ value, onChange, placeholder = '选择日期' }: Da
                     onClick={() => setSelectedDay(day)}
                     className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${
                       isSelected
-                        ? 'bg-sage text-white'
+                        ? 'bg-navy text-white'
                         : 'hover:bg-white text-text-dark border-2 border-transparent hover:border-text-dark'
                     }`}
                   >
@@ -215,7 +215,7 @@ export const DatePicker = ({ value, onChange, placeholder = '选择日期' }: Da
             <button
               type="button"
               onClick={handleConfirm}
-              className="flex-1 py-2 bg-sage text-text-dark font-bold rounded-xl border-2 border-text-dark transition-all hover:translate-y-0.5"
+              className="flex-1 py-2 bg-navy text-white font-bold rounded-xl border-2 border-text-dark transition-all hover:translate-y-0.5"
               style={{ boxShadow: '0 3px 0 #1A1A1A' }}
             >
               确认
