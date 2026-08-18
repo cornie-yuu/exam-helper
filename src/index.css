@@ -135,3 +135,46 @@ input::placeholder {
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* 掌握度滑块（navy 扁平风） */
+.mastery-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+.mastery-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: #1F316D;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+.mastery-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: #1F316D;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+/* Markdown 渲染（试卷 / 答疑） */
+.markdown-body h1 { font-size: 18px; font-weight: 700; color: #1F316D; margin: 10px 0 6px; }
+.markdown-body h2 { font-size: 16px; font-weight: 700; color: #1F316D; margin: 12px 0 6px; }
+.markdown-body h3 { font-size: 14px; font-weight: 600; margin: 8px 0 4px; }
+.markdown-body p { margin: 6px 0; line-height: 1.65; }
+.markdown-body ul, .markdown-body ol { margin: 6px 0; padding-left: 20px; }
+.markdown-body li { margin: 3px 0; }
+.markdown-body ol { list-style: decimal; }
+.markdown-body ol > li::marker { color: #1F316D; font-weight: 600; }
+.markdown-body strong { color: #1F316D; }
+.markdown-body code { background: #F0F0F0; padding: 1px 4px; border-radius: 4px; font-size: 12px; }
+.markdown-body .md-hr, .markdown-body hr { border: none; border-top: 1px solid #E5E7EB; margin: 14px 0; }

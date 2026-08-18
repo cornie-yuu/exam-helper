@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Calendar } from 'lucide-react';
 
@@ -8,102 +8,66 @@ interface DatePickerProps {
   placeholder?: string;
 }
 
+const WEEK = ['一', '二', '三', '四', '五', '六', '日'];
+const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
 export const DatePicker = ({ value, onChange, placeholder = '选择日期' }: DatePickerProps) => {
+  const today = new Date();
   const [isOpen, setIsOpen] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [selectedYear, setSelectedYear] = useState(() => {
-    if (value) return new Date(value).getFullYear();
-    return new Date().getFullYear();
-  });
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    if (value) return new Date(value).getMonth() + 1;
-    return new Date().getMonth() + 1;
-  });
-  const [selectedDay, setSelectedDay] = useState(() => {
-    if (value) return new Date(value).getDate();
-    return new Date().getDate();
-  });
-  const buttonRef = useRef<HTMLDivElement>(null);
-
-  const updatePosition = () => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const newPosition = {
-        top: rect.bottom + 8,
-        left: rect.left,
-      };
-      setPosition(newPosition);
-    }
-  };
-
-  const openCalendar = () => {
-    updatePosition();
-    setIsOpen(true);
-  };
+  const [step, setStep] = useState<'calendar' | 'year' | 'month'>('calendar');
+  // 视图年月（翻月/翻年时变化）
+  const [viewYear, setViewYear] = useState(() => (value ? new Date(value).getFullYear() : today.getFullYear()));
+  const [viewMonth, setViewMonth] = useState(() => (value ? new Date(value).getMonth() + 1 : today.getMonth() + 1));
+  // 选中的“日”（与视图年月组合成完整日期）
+  const [selectedDay, setSelectedDay] = useState(() => (value ? new Date(value).getDate() : today.getDate()));
+  const [yearBase, setYearBase] = useState(() => viewYear - 2);
 
   useEffect(() => {
     if (!isOpen) return;
-
-    const handleScroll = () => {
-      updatePosition();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
     };
-
-    const handleResize = () => {
-      updatePosition();
-    };
-
-    window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (target.closest('.date-picker-portal')) return;
-      if (buttonRef.current?.contains(target)) return;
-      setIsOpen(false);
-    };
-    
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [isOpen]);
 
   const formatDisplayDate = () => {
     if (!value) return placeholder;
     const date = new Date(value);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    return `${year}年${month}月${day}日`;
+    return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
   };
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month, 0).getDate();
+  const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
+
+  const changeMonth = (delta: number) => {
+    let m = viewMonth + delta;
+    let y = viewYear;
+    if (m < 1) { m = 12; y -= 1; }
+    if (m > 12) { m = 1; y += 1; }
+    setViewMonth(m);
+    setViewYear(y);
+    const maxDay = getDaysInMonth(y, m);
+    if (selectedDay > maxDay) setSelectedDay(maxDay);
   };
 
   const handleConfirm = () => {
-    const date = new Date(Date.UTC(selectedYear, selectedMonth - 1, selectedDay));
+    const date = new Date(Date.UTC(viewYear, viewMonth - 1, selectedDay));
     onChange(date.toISOString().split('T')[0]);
     setIsOpen(false);
   };
 
-  const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 2 + i);
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const daysInMonth = getDaysInMonth(viewYear, viewMonth);
+  const firstDayOfMonth = new Date(viewYear, viewMonth - 1, 1).getDay();
+  const offset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1; // 周一为每周第一列
+
+  const isToday = (day: number) =>
+    viewYear === today.getFullYear() && viewMonth === today.getMonth() + 1 && day === today.getDate();
 
   return (
-    <div ref={buttonRef} style={{ position: 'relative', zIndex: 1 }}>
+    <div className="relative">
       <button
         type="button"
-        onClick={openCalendar}
+        onClick={() => { setIsOpen(true); setStep('calendar'); }}
         className="input-field flex items-center justify-between w-full"
       >
         <span className={value ? 'text-text-dark font-bold' : 'text-text-light'}>
@@ -113,113 +77,175 @@ export const DatePicker = ({ value, onChange, placeholder = '选择日期' }: Da
       </button>
 
       {isOpen && createPortal(
-        <div 
-          className="date-picker-portal"
-          style={{
-            position: 'fixed',
-            top: position.top,
-            left: position.left,
-            zIndex: 99999,
-            transition: 'top 0.05s ease-out',
-            backgroundColor: '#FAF8F5',
-            borderRadius: '1rem',
-            boxShadow: '0 6px 0 #1A1A1A',
-            border: '2px solid #1A1A1A',
-            width: '320px',
-            padding: '16px',
-          }}
+        <div
+          className="fixed inset-0 z-[99999] flex items-end justify-center sm:items-center"
+          onMouseDown={(e) => { if (e.target === e.currentTarget) setIsOpen(false); }}
         >
-          <div className="flex gap-2 mb-4">
-            <select
-              value={selectedYear}
-              onChange={(e) => {
-                const year = Number(e.target.value);
-                setSelectedYear(year);
-                const maxDay = getDaysInMonth(year, selectedMonth);
-                if (selectedDay > maxDay) setSelectedDay(maxDay);
-              }}
-              className="flex-1 px-3 py-2 border-2 border-text-dark rounded-xl text-center bg-white font-bold"
-            >
-              {years.map(year => (
-                <option key={year} value={year}>{year}年</option>
-              ))}
-            </select>
-            <select
-              value={selectedMonth}
-              onChange={(e) => {
-                const month = Number(e.target.value);
-                setSelectedMonth(month);
-                const maxDay = getDaysInMonth(selectedYear, month);
-                if (selectedDay > maxDay) setSelectedDay(maxDay);
-              }}
-              className="flex-1 px-3 py-2 border-2 border-text-dark rounded-xl text-center bg-white font-bold"
-            >
-              {months.map(month => (
-                <option key={month} value={month}>{month}月</option>
-              ))}
-            </select>
-            <select
-              value={selectedDay}
-              onChange={(e) => setSelectedDay(Number(e.target.value))}
-              className="flex-1 px-3 py-2 border-2 border-text-dark rounded-xl text-center bg-white font-bold"
-            >
-              {days.map(day => (
-                <option key={day} value={day}>{day}日</option>
-              ))}
-            </select>
-          </div>
+          <div className="absolute inset-0 bg-black/40" />
 
-          <div className="grid grid-cols-7 gap-1 mb-4">
-            {['一', '二', '三', '四', '五', '六', '日'].map(day => (
-              <div key={day} className="text-center text-xs text-text-light font-bold py-1">
-                {day}
-              </div>
-            ))}
-            {(() => {
-              const firstDayOfMonth = new Date(selectedYear, selectedMonth - 1, 1).getDay();
-              const offset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-              const cells = [];
-              for (let i = 0; i < offset; i++) {
-                cells.push(<div key={`empty-${i}`} />);
-              }
-              for (let day = 1; day <= daysInMonth; day++) {
-                const isSelected = day === selectedDay;
-                cells.push(
+          <div className="relative w-full max-w-[340px] mx-4 mb-4 sm:mb-0 bg-white rounded-2xl shadow-xl overflow-hidden">
+            {step === 'calendar' ? (
+              <>
+                {/* 月份导航 */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                   <button
-                    key={day}
                     type="button"
-                    onClick={() => setSelectedDay(day)}
-                    className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${
-                      isSelected
-                        ? 'bg-navy text-white'
-                        : 'hover:bg-white text-text-dark border-2 border-transparent hover:border-text-dark'
-                    }`}
+                    onClick={() => changeMonth(-1)}
+                    className="w-8 h-8 rounded-lg text-navy hover:bg-gray-100 flex items-center justify-center text-lg"
+                    aria-label="上个月"
+                  >‹</button>
+                  <button
+                    type="button"
+                    onClick={() => setStep('year')}
+                    className="text-navy font-bold text-sm px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    {day}
+                    {viewYear}年{viewMonth}月
                   </button>
-                );
-              }
-              return cells;
-            })()}
-          </div>
+                  <button
+                    type="button"
+                    onClick={() => changeMonth(1)}
+                    className="w-8 h-8 rounded-lg text-navy hover:bg-gray-100 flex items-center justify-center text-lg"
+                    aria-label="下个月"
+                  >›</button>
+                </div>
 
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="flex-1 py-2 text-text-dark font-bold hover:bg-white rounded-xl border-2 border-text-dark transition-all"
-              style={{ boxShadow: '0 3px 0 #1A1A1A' }}
-            >
-              取消
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className="flex-1 py-2 bg-navy text-white font-bold rounded-xl border-2 border-text-dark transition-all hover:translate-y-0.5"
-              style={{ boxShadow: '0 3px 0 #1A1A1A' }}
-            >
-              确认
-            </button>
+                {/* 星期表头 */}
+                <div className="grid grid-cols-7 gap-1 px-4 py-2">
+                  {WEEK.map((d) => (
+                    <div key={d} className="text-center text-xs text-text-light font-bold py-1">{d}</div>
+                  ))}
+                </div>
+
+                {/* 日期网格 */}
+                <div className="grid grid-cols-7 gap-1 px-4 pb-4">
+                  {Array.from({ length: offset }).map((_, i) => (
+                    <div key={`empty-${i}`} />
+                  ))}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const day = i + 1;
+                    const selectedFlag = day === selectedDay;
+                    const todayFlag = isToday(day);
+                    return (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() => setSelectedDay(day)}
+                        className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                          selectedFlag
+                            ? 'bg-navy text-white'
+                            : todayFlag
+                              ? 'bg-navy/10 text-navy'
+                              : 'text-text-dark hover:bg-gray-100'
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* 操作按钮 */}
+                <div className="flex gap-2 px-4 pb-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="flex-1 py-2.5 text-navy font-bold rounded-xl border border-gray-200 bg-white transition-colors hover:bg-gray-50"
+                  >取消</button>
+                  <button
+                    type="button"
+                    onClick={handleConfirm}
+                    className="flex-1 py-2.5 bg-navy text-white font-bold rounded-xl transition-colors hover:opacity-90"
+                  >确认</button>
+                </div>
+              </>
+            ) : step === 'year' ? (
+              <>
+                {/* 年份选择视图：先选年 */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => setStep('calendar')}
+                    className="text-navy font-bold text-sm"
+                  >返回</button>
+                  <span className="text-navy font-bold text-sm">选择年份</span>
+                  <div className="w-8" />
+                </div>
+
+                {/* 年份导航（翻区间） */}
+                <div className="flex items-center justify-between px-4 py-2">
+                  <button
+                    type="button"
+                    onClick={() => setYearBase((y) => y - 6)}
+                    className="w-8 h-8 rounded-lg text-navy hover:bg-gray-100 flex items-center justify-center text-lg"
+                    aria-label="更早的年份"
+                  >‹</button>
+                  <span className="text-navy font-bold text-sm">{yearBase}–{yearBase + 5}年</span>
+                  <button
+                    type="button"
+                    onClick={() => setYearBase((y) => y + 6)}
+                    className="w-8 h-8 rounded-lg text-navy hover:bg-gray-100 flex items-center justify-center text-lg"
+                    aria-label="更晚的年份"
+                  >›</button>
+                </div>
+
+                {/* 年份网格：点选后进入月份选择 */}
+                <div className="grid grid-cols-3 gap-2 px-4 pb-5">
+                  {Array.from({ length: 6 }).map((_, i) => {
+                    const y = yearBase + i;
+                    const active = y === viewYear;
+                    return (
+                      <button
+                        key={y}
+                        type="button"
+                        onClick={() => { setViewYear(y); setStep('month'); }}
+                        className={`py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                          active
+                            ? 'bg-navy text-white'
+                            : 'bg-gray-50 text-text-dark hover:bg-gray-100'
+                        }`}
+                      >
+                        {y}年
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <>
+                {/* 月份选择视图：再选月 */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => setStep('year')}
+                    className="text-navy font-bold text-sm"
+                  >返回</button>
+                  <span className="text-navy font-bold text-sm">{viewYear}年 · 选择月份</span>
+                  <div className="w-8" />
+                </div>
+
+                {/* 月份网格 */}
+                <div className="grid grid-cols-3 gap-2 px-4 pb-5">
+                  {MONTHS.map((m, idx) => {
+                    const monthNum = idx + 1;
+                    const active = monthNum === viewMonth;
+                    return (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => { setViewMonth(monthNum); setStep('calendar'); }}
+                        className={`py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                          active
+                            ? 'bg-navy text-white'
+                            : 'bg-gray-50 text-text-dark hover:bg-gray-100'
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </div>,
         document.body

@@ -3,7 +3,7 @@ import { Play, Calendar, User } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: '开始', icon: Play },
-  { path: '/plan', label: '计划', icon: Calendar },
+  { path: '/plan', label: '备考台', icon: Calendar },
   { path: '/profile', label: '我的', icon: User },
 ];
 
